@@ -45,11 +45,11 @@ def validate_input(dict_request):
             raise NotInCols
 
     def _validate_values(col, val):
+
         schema = get_schema()
 
         if not (schema[col]["min"] <= float(dict_request[col]) <= schema[col]["max"]):
             raise NotInRange
-
 
     for col, val in dict_request.items():
         _validate_cols(col)
@@ -58,14 +58,14 @@ def validate_input(dict_request):
     return True
 
 
-def form_response(dict_response):
+def form_response(dict_request):
     if validate_input(dict_request):
         data = dict_request.values()
         data = [list(map(float, data))]
         response = predict(data)
         return response
 
-def api_response(dict_response):
+def api_response(dict_request):
     try:
         if validate_input(dict_request):
             data = np.array([list(dict_request.values())])
@@ -79,6 +79,10 @@ def api_response(dict_response):
 
     except NotInCols as e:
         response = {"the_exected_cols": get_schema().keys(), "response": str(e)}
+        return response
+
+    except Exception as e:
+        response = {"response": str(e)}
         return response
 
 
